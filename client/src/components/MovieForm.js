@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 
 function MovieForm() {
+  const [errors, setErrors] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
     year: new Date().getFullYear(),
@@ -16,33 +17,22 @@ function MovieForm() {
 
   function handleSubmit(e) {
     e.preventDefault();
-     fetch("/movies", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify(formData),
-}).then((response) => console.log(response));
-function handleSubmit(e) {
-  e.preventDefault();
-  fetch("/movies", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  }).then((response) => {
-    if (response.ok) {
-      response.json().then((newMovie) => console.log(newMovie));
-    } else {
-      response.json().then((errorData) => setErrors(errorData.errors));
-    }
-  });
-}
+    fetch("/movies", {
+    //  const response = await fetch("/movies", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(formData),
-    })
-      .then((response) => response.json())
-      .then((newMovie) => console.log(newMovie));
+     })
+     .then((response) => {
+      // const data = await response.json(); = use await response when there is a ploblem of async
+  if (response.ok) {
+    response.json().then((newMovie) => console.log(newMovie));
+  } else {
+    response.json().then((errorData) => setErrors(errorData.errors));
+  }
+})
   }
 
   function handleChange(e) {
@@ -143,6 +133,14 @@ function handleSubmit(e) {
             />
           </label>
         </FormGroup>
+        {/* <SubmitButton type="submit">Add Movie</SubmitButton> */}
+        {errors.length > 0 && (
+          <ul style={{ color: "red" }}>
+            {errors.map((error) => (
+              <li key={error}>{error}</li>
+            ))}
+          </ul>
+        )}
         <SubmitButton type="submit">Add Movie</SubmitButton>
       </form>
     </Wrapper>
